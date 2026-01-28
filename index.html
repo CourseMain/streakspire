@@ -613,10 +613,11 @@
       const SUPABASE_URL = "https://fuhwlybanipypccjotpa.supabase.co";
       const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1aHdseWJhbmlweXBjY2pvdHBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0ODMyNjQsImV4cCI6MjA4NTA1OTI2NH0.kpsfqn4bSxP7mYk-3-mJQLoGaHR7O61VQrd6DmKzAH0";
       const hasRealSupabaseConfig = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
-      var supabase = window.supabaseClient || null;
-      if (!supabase && window.supabase && hasRealSupabaseConfig) {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        window.supabaseClient = supabase;
+      const supabaseLib = window.supabase;
+      let supabaseClient = window.supabaseClient || null;
+      if (!supabaseClient && supabaseLib && hasRealSupabaseConfig) {
+        supabaseClient = supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        window.supabaseClient = supabaseClient;
       }
 
       function mapAuthUser(authUser) {
@@ -641,9 +642,9 @@
 
       const api = {
         async signup(email, password) {
-          if (!supabase) throw new Error("Supabase is not configured correctly.");
+          if (!supabaseClient) throw new Error("Supabase is not configured correctly.");
           const cleanEmail = String(email).trim().toLowerCase();
-          const { data, error } = await supabase.auth.signUp({
+          const { data, error } = await supabaseClient.auth.signUp({
             email: cleanEmail,
             password: String(password),
           });
@@ -651,7 +652,7 @@
           // If email confirmation is required, there may be no session yet.
           let authUser = data.user;
           if (!data.session) {
-            const signIn = await supabase.auth.signInWithPassword({
+            const signIn = await supabaseClient.auth.signInWithPassword({
               email: cleanEmail,
               password: String(password),
             });
@@ -661,9 +662,9 @@
           return { user: mapAuthUser(authUser) };
         },
         async login(email, password) {
-          if (!supabase) throw new Error("Supabase is not configured correctly.");
+          if (!supabaseClient) throw new Error("Supabase is not configured correctly.");
           const cleanEmail = String(email).trim().toLowerCase();
-          const { data, error } = await supabase.auth.signInWithPassword({
+          const { data, error } = await supabaseClient.auth.signInWithPassword({
             email: cleanEmail,
             password: String(password),
           });
@@ -671,7 +672,7 @@
           return { user: mapAuthUser(data.user) };
         },
         async getGoals(userId) {
-          const { data, error } = await supabase
+          const { data, error } = await supabaseClient
             .from("goals")
             .select("*")
             .eq("user_id", userId);
@@ -679,12 +680,14 @@
           return { goals: data || [] };
         },
         async saveGoal(goal) {
-          const { error } = await supabase.from("goals").upsert(goal, { onConflict: "id" });
+          const { error } = await supabaseClient
+            .from("goals")
+            .upsert(goal, { onConflict: "id" });
           if (error) throw error;
           return { goal };
         },
         async getCheckins(userId) {
-          const { data, error } = await supabase
+          const { data, error } = await supabaseClient
             .from("checkins")
             .select("*")
             .eq("user_id", userId);
@@ -692,7 +695,7 @@
           return { checkins: data || [] };
         },
         async saveCheckin(checkin) {
-          const { error } = await supabase
+          const { error } = await supabaseClient
             .from("checkins")
             .upsert(checkin, { onConflict: "id" });
           if (error) throw error;
@@ -1365,13 +1368,13 @@
           $("authMsg").textContent = "Enter your email first, then click Forgot password.";
           return;
         }
-        if (!supabase) {
+        if (!supabaseClient) {
           $("authMsg").textContent = "Supabase is not configured correctly.";
           return;
         }
         try {
           $("authMsg").textContent = "Sending reset email...";
-          const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
             redirectTo: window.location.href,
           });
           if (error) throw error;
@@ -1395,7 +1398,7 @@
         }
         try {
           $("authMsg").textContent = "Updating password...";
-          const { error } = await supabase.auth.updateUser({ password });
+          const { error } = await supabaseClient.auth.updateUser({ password });
           if (error) throw error;
           $("authMsg").textContent = "Password updated. You can log in now.";
           hideResetBox();
@@ -1414,7 +1417,7 @@
       });
 
       $("logoutBtn").addEventListener("click", async () => {
-        await supabase.auth.signOut();
+        await supabaseClient.auth.signOut();
         setUser(null);
       });
 
@@ -1442,16 +1445,15 @@
       // Start with backup actions hidden; you can unhide via setBackupVisibility(true).
       setBackupVisibility(false);
       // Restore session if Supabase Auth already has one.
-      if (!supabase) {
+      if (!supabaseClient) {
         $("authMsg").textContent = "Supabase is not configured. Check URL and anon key.";
       } else {
-        // Temporary: always show reset box for debugging.
-        supabase.auth.onAuthStateChange((event) => {
+        supabaseClient.auth.onAuthStateChange((event) => {
           if (event === "PASSWORD_RECOVERY") {
             showResetBox();
           }
         });
-        supabase.auth.getUser().then(({ data }) => {
+        supabaseClient.auth.getUser().then(({ data }) => {
           if (data && data.user) {
             setUser(mapAuthUser(data.user));
           }

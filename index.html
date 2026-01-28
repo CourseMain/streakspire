@@ -1,0 +1,1463 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Streakspire - Goal Streaks</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f7f3ea;
+        --bg-2: #f1e6d5;
+        --ink: #1e1b16;
+        --muted: #6d6256;
+        --accent: #ff7a18;
+        --accent-2: #2e6f6d;
+        --card: #fffaf2;
+        --card-2: #f2efe7;
+        --stroke: #e0d5c6;
+        --good: #2d7c4f;
+        --min: #c2702a;
+        --skip: #a64c4c;
+        --shadow: 0 18px 40px rgba(30, 27, 22, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Space Grotesk", system-ui, sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top right, rgba(255, 122, 24, 0.12), transparent 45%),
+          radial-gradient(circle at 20% 20%, rgba(46, 111, 109, 0.12), transparent 40%),
+          linear-gradient(160deg, var(--bg), var(--bg-2));
+        min-height: 100vh;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: "Fraunces", serif;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin: 0 0 0.4rem;
+      }
+
+      p {
+        margin: 0 0 0.8rem;
+        color: var(--muted);
+      }
+
+      .app {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 32px 24px 80px;
+      }
+
+      .hero {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, var(--accent), #ffd2a6);
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        color: #1c1207;
+        box-shadow: 0 8px 20px rgba(255, 122, 24, 0.3);
+      }
+
+      .nav {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .nav button {
+        border: 1px solid var(--stroke);
+        background: var(--card);
+        color: var(--ink);
+        padding: 8px 14px;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 600;
+      }
+
+      .nav button.active,
+      .nav button:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        transform: translateY(-1px);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 18px;
+      }
+
+      .card {
+        background: var(--card);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--stroke);
+      }
+
+      .card.soft {
+        background: var(--card-2);
+      }
+
+      .section {
+        display: none;
+        animation: lift 0.5s ease;
+      }
+
+      .section.active {
+        display: block;
+      }
+
+      @keyframes lift {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .big-action {
+        width: 100%;
+        padding: 18px 20px;
+        border-radius: 18px;
+        border: none;
+        background: linear-gradient(140deg, var(--accent), #ffb56b);
+        color: #1d1005;
+        font-weight: 700;
+        font-size: 1.1rem;
+        cursor: pointer;
+        box-shadow: 0 16px 28px rgba(255, 122, 24, 0.3);
+        transition: transform 0.2s ease;
+      }
+
+      .big-action:hover {
+        transform: translateY(-2px);
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--stroke);
+        font-size: 0.8rem;
+        background: #fff;
+      }
+
+      .tag.good {
+        border-color: rgba(45, 124, 79, 0.4);
+        color: var(--good);
+      }
+
+      .tag.min {
+        border-color: rgba(194, 112, 42, 0.4);
+        color: var(--min);
+      }
+
+      .tag.skip {
+        border-color: rgba(166, 76, 76, 0.4);
+        color: var(--skip);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 10px;
+        border-bottom: 1px solid var(--stroke);
+      }
+
+      th {
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--stroke);
+        background: #fff;
+        font-family: inherit;
+        font-size: 0.95rem;
+      }
+
+      textarea {
+        min-height: 100px;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+      }
+
+      .btn {
+        border: none;
+        border-radius: 12px;
+        padding: 10px 14px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .btn.primary {
+        background: var(--accent-2);
+        color: #f4f0e6;
+      }
+
+      .btn.secondary {
+        background: #fff;
+        border: 1px solid var(--stroke);
+      }
+
+      .btn.ghost {
+        background: transparent;
+        border: 1px dashed var(--stroke);
+      }
+
+      .auth {
+        max-width: 520px;
+        margin: 80px auto;
+      }
+
+      .calendar {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 6px;
+        margin-top: 12px;
+      }
+
+      .calendar .day {
+        padding: 8px 6px;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 0.8rem;
+        background: #fff;
+        border: 1px solid var(--stroke);
+      }
+
+      .day.full {
+        background: rgba(45, 124, 79, 0.15);
+        border-color: rgba(45, 124, 79, 0.4);
+      }
+
+      .day.min {
+        background: rgba(194, 112, 42, 0.15);
+        border-color: rgba(194, 112, 42, 0.4);
+      }
+
+      .day.skip {
+        background: rgba(166, 76, 76, 0.15);
+        border-color: rgba(166, 76, 76, 0.4);
+      }
+
+      .notice {
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: #fff;
+        border: 1px solid var(--stroke);
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #fff;
+        border: 1px solid var(--stroke);
+        font-size: 0.85rem;
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 18px;
+      }
+
+      @media (max-width: 860px) {
+        .hero {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .two-col {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="hero">
+        <div class="brand">
+          <div class="logo">SS</div>
+          <div>
+            <h1>Streakspire</h1>
+            <p>Build real momentum with streaks that match your energy.</p>
+          </div>
+        </div>
+        <div>
+          <div class="status-pill" id="userStatus" style="display: none"></div>
+          <div class="nav" id="navBar" style="margin-top: 10px; display: none">
+            <button data-view="dashboard" class="active">Dashboard</button>
+            <button data-view="goals">Goals</button>
+            <button data-view="checkin">Check In</button>
+            <button data-view="history">History</button>
+            <button id="backupToggleBtn">Show Backups</button>
+            <button id="exportBtn">Export</button>
+            <button id="importBtn">Import</button>
+            <button id="logoutBtn">Log Out</button>
+          </div>
+        </div>
+      </header>
+      <input id="importFile" type="file" accept="application/json" style="display: none" />
+
+      <section class="section active auth" id="authView">
+        <div class="card">
+          <h2>Welcome back</h2>
+          <p>Track streaks across daily and weekly goals. Study mode keeps you accountable.</p>
+          <div class="form-row">
+            <div>
+              <label>Email</label>
+              <input type="email" id="loginEmail" placeholder="you@email.com" />
+            </div>
+            <div>
+              <label>Password</label>
+              <input type="password" id="loginPassword" placeholder="Password" />
+            </div>
+          </div>
+          <div style="margin-top: 14px; display: flex; gap: 10px">
+            <button class="btn primary" id="loginBtn" type="button">Log In</button>
+            <button class="btn secondary" id="signupBtn" type="button">Sign Up</button>
+          </div>
+          <div style="margin-top: 8px; display: flex">
+            <button class="btn ghost" id="forgotBtn" typƒe="button">Forgot password</button>
+          </div>
+          <p id="authMsg" style="margin-top: 10px"></p>
+          <div id="resetBox" class="card soft" style="margin-top: 12px; display: none">
+            <h3>Reset password</h3>
+            <p>Enter a new password for your account.</p>
+            <div class="form-row">
+              <div>
+                <label>New password</label>
+                <input id="resetPassword" type="password" placeholder="New password" />
+              </div>
+              <div>
+                <label>Confirm password</label>
+                <input id="resetConfirm" type="password" placeholder="Confirm password" />
+              </div>
+            </div>
+            <div style="margin-top: 10px; display: flex; gap: 10px">
+              <button class="btn primary" id="resetBtn" type="button">Update password</button>
+              <button class="btn secondary" id="resetCancelBtn" type="button">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="dashboardView">
+        <div class="grid">
+          <div class="card">
+            <h2>Today</h2>
+            <div id="todayList" class="notice">No active goals yet.</div>
+          </div>
+          <div class="card soft">
+            <h2>This Week</h2>
+            <div id="weekList" class="notice">Weekly progress will appear here.</div>
+          </div>
+          <div class="card">
+            <h2>Quick Action</h2>
+            <p>Log a check-in to keep your streaks alive.</p>
+            <button class="big-action" id="goCheckIn">Check In</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="goalsView">
+        <div class="two-col">
+          <div class="card">
+            <h2>Active Goals</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Mode</th>
+                  <th>Cadence</th>
+                  <th>Metric</th>
+                  <th>Target</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="goalsTable"></tbody>
+            </table>
+          </div>
+          <div class="card soft">
+            <h2 id="goalFormTitle">Create Goal</h2>
+            <div class="form-row">
+              <div>
+                <label>Name</label>
+                <input id="goalName" placeholder="e.g. Deep Study" />
+              </div>
+              <div>
+                <label>Mode</label>
+                <select id="goalMode">
+                  <option value="study">Study</option>
+                  <option value="casual">Casual</option>
+                </select>
+              </div>
+              <div>
+                <label>Cadence</label>
+                <select id="goalCadence">
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                </select>
+              </div>
+              <div>
+                <label>Metric</label>
+                <select id="goalMetric">
+                  <option value="minutes">Minutes</option>
+                  <option value="sessions">Sessions</option>
+                  <option value="checkbox">Checkbox</option>
+                </select>
+              </div>
+              <div>
+                <label>Target</label>
+                <input id="goalTarget" type="number" min="1" value="30" />
+              </div>
+              <div>
+                <label>Minimum (optional)</label>
+                <input id="goalMinimum" type="number" min="0" placeholder="Fallback" />
+              </div>
+              <div>
+                <label>Active</label>
+                <select id="goalActive">
+                  <option value="true" selected>Active</option>
+                  <option value="false">Paused</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-top: 14px; display: flex; gap: 10px">
+              <button class="btn primary" id="saveGoalBtn">Save Goal</button>
+              <button class="btn ghost" id="resetGoalBtn">Reset</button>
+            </div>
+            <p class="notice" style="margin-top: 12px">
+              Target = full completion. Minimum = fallback completion that still counts.
+            </p>
+            <p class="notice" style="margin-top: 12px">
+              Study check-ins require minutes, a topic, and a short summary.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="checkinView">
+        <div class="card">
+          <h2>Check In</h2>
+          <p>Log progress for today or this week.</p>
+          <div class="form-row">
+            <div>
+              <label>Goal</label>
+              <select id="checkinGoal"></select>
+            </div>
+            <div>
+              <label>Date</label>
+              <input id="checkinDate" type="date" />
+            </div>
+            <div>
+              <label>Result</label>
+              <select id="checkinResult">
+                <option value="auto">Auto (full/min/skip)</option>
+                <option value="full">Full completion</option>
+                <option value="min">Minimum completion</option>
+                <option value="skip">Skip</option>
+              </select>
+            </div>
+          </div>
+          <div id="studyFields" style="margin-top: 12px; display: none">
+            <div class="form-row">
+              <div>
+                <label>Minutes Studied</label>
+                <input id="checkinMinutes" type="number" min="0" placeholder="e.g. 45" />
+              </div>
+              <div>
+                <label>Topic</label>
+                <input id="checkinTopic" placeholder="e.g. Algebra" />
+              </div>
+            </div>
+            <div style="margin-top: 12px">
+              <label>Short Summary</label>
+              <textarea id="checkinSummary" placeholder="What did you cover?"></textarea>
+            </div>
+          </div>
+          <div id="casualFields" style="margin-top: 12px; display: none">
+            <div class="form-row">
+              <div>
+                <label>Progress Value</label>
+                <input id="checkinValue" type="number" min="0" placeholder="Optional" />
+              </div>
+            </div>
+            <div style="margin-top: 12px">
+              <label>Note (optional)</label>
+              <textarea id="checkinNote" placeholder="How did it feel?"></textarea>
+            </div>
+          </div>
+          <div style="margin-top: 14px; display: flex; gap: 10px">
+            <button class="btn primary" id="saveCheckinBtn">Save Check-In</button>
+            <button class="btn secondary" id="resetCheckinBtn">Reset</button>
+          </div>
+          <p id="checkinMsg" class="notice" style="margin-top: 12px"></p>
+        </div>
+      </section>
+
+      <section class="section" id="historyView">
+        <div class="two-col">
+          <div class="card">
+            <h2>Goal Stats</h2>
+            <div class="form-row">
+              <div>
+                <label>Goal</label>
+                <select id="historyGoal"></select>
+              </div>
+              <div>
+                <label>Month</label>
+                <input id="historyMonth" type="month" />
+              </div>
+            </div>
+            <div id="statsSummary" style="margin-top: 14px"></div>
+            <div class="calendar" id="calendar"></div>
+          </div>
+          <div class="card soft">
+            <h2>Check-In Log</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Goal</th>
+                  <th>Result</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody id="checkinTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      const store = {
+        load() {
+          return { users: [], goals: [], checkins: [], currentUserId: null };
+        },
+        save() {
+          // No-op: persistence now happens via the backend API.
+        },
+      };
+
+      const state = {
+        data: store.load(),
+        currentUser: null,
+        editingGoalId: null,
+      };
+
+      // Paste your Supabase values here.
+      const SUPABASE_URL = "https://fuhwlybanipypccjotpa.supabase.co";
+      const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1aHdseWJhbmlweXBjY2pvdHBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0ODMyNjQsImV4cCI6MjA4NTA1OTI2NH0.kpsfqn4bSxP7mYk-3-mJQLoGaHR7O61VQrd6DmKzAH0";
+      const hasRealSupabaseConfig = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+      var supabase = window.supabaseClient || null;
+      if (!supabase && window.supabase && hasRealSupabaseConfig) {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        window.supabaseClient = supabase;
+      }
+
+      function mapAuthUser(authUser) {
+        return authUser ? { id: authUser.id, email: authUser.email || "" } : null;
+      }
+
+      function showResetBox(message = "Recovery mode: set a new password.") {
+        $("resetBox").style.display = "block";
+        $("authMsg").textContent = message;
+      }
+
+      function hideResetBox() {
+        $("resetBox").style.display = "none";
+      }
+
+      function isRecoveryLink() {
+        const url = new URL(window.location.href);
+        const type = url.searchParams.get("type");
+        const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+        return type === "recovery" || hash.get("type") === "recovery";
+      }
+
+      const api = {
+        async signup(email, password) {
+          if (!supabase) throw new Error("Supabase is not configured correctly.");
+          const cleanEmail = String(email).trim().toLowerCase();
+          const { data, error } = await supabase.auth.signUp({
+            email: cleanEmail,
+            password: String(password),
+          });
+          if (error) throw error;
+          // If email confirmation is required, there may be no session yet.
+          let authUser = data.user;
+          if (!data.session) {
+            const signIn = await supabase.auth.signInWithPassword({
+              email: cleanEmail,
+              password: String(password),
+            });
+            if (signIn.error) throw signIn.error;
+            authUser = signIn.data.user;
+          }
+          return { user: mapAuthUser(authUser) };
+        },
+        async login(email, password) {
+          if (!supabase) throw new Error("Supabase is not configured correctly.");
+          const cleanEmail = String(email).trim().toLowerCase();
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: cleanEmail,
+            password: String(password),
+          });
+          if (error) throw error;
+          return { user: mapAuthUser(data.user) };
+        },
+        async getGoals(userId) {
+          const { data, error } = await supabase
+            .from("goals")
+            .select("*")
+            .eq("user_id", userId);
+          if (error) throw error;
+          return { goals: data || [] };
+        },
+        async saveGoal(goal) {
+          const { error } = await supabase.from("goals").upsert(goal, { onConflict: "id" });
+          if (error) throw error;
+          return { goal };
+        },
+        async getCheckins(userId) {
+          const { data, error } = await supabase
+            .from("checkins")
+            .select("*")
+            .eq("user_id", userId);
+          if (error) throw error;
+          return { checkins: data || [] };
+        },
+        async saveCheckin(checkin) {
+          const { error } = await supabase
+            .from("checkins")
+            .upsert(checkin, { onConflict: "id" });
+          if (error) throw error;
+          return { checkin };
+        },
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      const views = {
+        auth: $("authView"),
+        dashboard: $("dashboardView"),
+        goals: $("goalsView"),
+        checkin: $("checkinView"),
+        history: $("historyView"),
+      };
+
+      const navBar = $("navBar");
+      const userStatus = $("userStatus");
+
+      function uid() {
+        return Math.random().toString(36).slice(2, 10);
+      }
+
+      function toLocalDateStr(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      }
+
+      function parseLocalDateStr(dateStr) {
+        const [y, m, d] = dateStr.split("-").map(Number);
+        return new Date(y, m - 1, d);
+      }
+
+      function addDaysToDateStr(dateStr, deltaDays) {
+        const date = parseLocalDateStr(dateStr);
+        date.setDate(date.getDate() + deltaDays);
+        return toLocalDateStr(date);
+      }
+
+      function getWeekId(date) {
+        const target = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+        const dayNr = (target.getUTCDay() + 6) % 7;
+        target.setUTCDate(target.getUTCDate() - dayNr + 3);
+        const firstThursday = new Date(Date.UTC(target.getUTCFullYear(), 0, 4));
+        const diff = target - firstThursday;
+        const week = 1 + Math.round(diff / (7 * 24 * 60 * 60 * 1000));
+        return `${target.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
+      }
+
+      function getUserGoals(userId) {
+        return state.data.goals.filter((g) => g.user_id === userId);
+      }
+
+      function getUserCheckins(userId) {
+        return state.data.checkins.filter((c) => c.user_id === userId);
+      }
+
+      function switchView(viewName) {
+        Object.values(views).forEach((view) => view.classList.remove("active"));
+        if (views[viewName]) {
+          views[viewName].classList.add("active");
+        }
+        document.querySelectorAll(".nav button[data-view]").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.view === viewName);
+        });
+      }
+
+      async function loadUserData(userId) {
+        const [{ goals }, { checkins }] = await Promise.all([
+          api.getGoals(userId),
+          api.getCheckins(userId),
+        ]);
+        state.data.goals = goals || [];
+        state.data.checkins = checkins || [];
+      }
+
+      async function setUser(user) {
+        state.currentUser = user;
+        state.data.currentUserId = user ? user.id : null;
+        userStatus.textContent = user ? `Signed in as ${user.email}` : "Guest mode";
+        userStatus.style.display = user ? "inline-flex" : "none";
+        navBar.style.display = user ? "flex" : "none";
+        switchView(user ? "dashboard" : "auth");
+        if (user) {
+          try {
+            await loadUserData(user.id);
+            renderAll();
+          } catch (err) {
+            $("authMsg").textContent = "Could not load your data from the server.";
+          }
+        } else {
+          state.data.goals = [];
+          state.data.checkins = [];
+        }
+      }
+
+      let backupsVisible = false;
+
+      function setBackupVisibility(show) {
+        backupsVisible = Boolean(show);
+        const display = show ? "" : "none";
+        $("exportBtn").style.display = display;
+        $("importBtn").style.display = display;
+        $("backupToggleBtn").textContent = show ? "Hide Backups" : "Show Backups";
+      }
+
+      function toggleBackups() {
+        setBackupVisibility(!backupsVisible);
+      }
+
+      function exportData() {
+        const payload = JSON.stringify(state.data, null, 2);
+        const blob = new Blob([payload], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        const stamp = toLocalDateStr(new Date());
+        a.href = url;
+        a.download = `streakspire-backup-${stamp}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function importDataFromFile(file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const parsed = JSON.parse(String(reader.result || "{}"));
+            if (!parsed || !Array.isArray(parsed.users)) {
+              alert("That file does not look like a Streakspire backup.");
+              return;
+            }
+            state.data = {
+              users: parsed.users || [],
+              goals: parsed.goals || [],
+              checkins: parsed.checkins || [],
+              currentUserId: parsed.currentUserId || null,
+            };
+            store.save(state.data);
+            const existingUser = state.data.users.find((u) => u.id === state.data.currentUserId);
+            setUser(existingUser || null);
+            if (existingUser) {
+              renderAll();
+            }
+          } catch (err) {
+            alert("Import failed. Make sure you selected a valid JSON backup.");
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      function renderGoalsTable() {
+        const tbody = $("goalsTable");
+        tbody.innerHTML = "";
+        const goals = getUserGoals(state.currentUser.id);
+        if (!goals.length) {
+          tbody.innerHTML = `<tr><td colspan="6">No goals yet.</td></tr>`;
+          return;
+        }
+        goals.forEach((goal) => {
+          const status = goal.active ? "Active" : "Paused";
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><strong>${goal.name}</strong></td>
+            <td>${goal.mode}</td>
+            <td>${goal.cadence}</td>
+            <td>${goal.metric}</td>
+            <td>${goal.target}${goal.minimum ? ` / min ${goal.minimum}` : ""}</td>
+            <td>${status}</td>
+          `;
+          tr.addEventListener("click", () => loadGoalForEdit(goal));
+          tbody.appendChild(tr);
+        });
+      }
+
+      function loadGoalForEdit(goal) {
+        state.editingGoalId = goal.id;
+        $("goalFormTitle").textContent = "Edit Goal";
+        $("goalName").value = goal.name;
+        $("goalMode").value = goal.mode;
+        $("goalCadence").value = goal.cadence;
+        $("goalMetric").value = goal.metric;
+        $("goalTarget").value = goal.target;
+        $("goalMinimum").value = goal.minimum || "";
+        $("goalActive").value = goal.active ? "true" : "false";
+      }
+
+      function resetGoalForm() {
+        state.editingGoalId = null;
+        $("goalFormTitle").textContent = "Create Goal";
+        $("goalName").value = "";
+        $("goalMode").value = "study";
+        $("goalCadence").value = "daily";
+        $("goalMetric").value = "minutes";
+        $("goalTarget").value = 30;
+        $("goalMinimum").value = "";
+        $("goalActive").value = "true";
+      }
+
+      function updateCheckinGoalSelect() {
+        const select = $("checkinGoal");
+        const historySelect = $("historyGoal");
+        select.innerHTML = "";
+        historySelect.innerHTML = "";
+        const goals = getUserGoals(state.currentUser.id).filter((g) => g.active);
+        if (!goals.length) {
+          select.innerHTML = `<option value="">Create a goal first</option>`;
+          historySelect.innerHTML = `<option value="">Create a goal first</option>`;
+          return;
+        }
+        goals.forEach((goal) => {
+          const option = document.createElement("option");
+          option.value = goal.id;
+          option.textContent = goal.name;
+          select.appendChild(option);
+          const option2 = option.cloneNode(true);
+          historySelect.appendChild(option2);
+        });
+      }
+
+      function updateCheckinFields() {
+        const goalId = $("checkinGoal").value;
+        const goal = state.data.goals.find((g) => g.id === goalId);
+        if (!goal) return;
+        const isStudy = goal.mode === "study";
+        $("studyFields").style.display = isStudy ? "block" : "none";
+        $("casualFields").style.display = isStudy ? "none" : "block";
+      }
+
+      function calculateValue(goal, payload) {
+        if (goal.metric === "minutes") return payload.minutes || 0;
+        if (goal.metric === "sessions") return payload.sessions || 1;
+        return payload.checkbox || 1;
+      }
+
+      function resolveResult(goal, value, chosen) {
+        if (chosen && chosen !== "auto") return chosen;
+        if (value >= goal.target) return "full";
+        if (goal.minimum && value >= goal.minimum) return "min";
+        return "skip";
+      }
+
+      async function saveGoal() {
+        const name = $("goalName").value.trim();
+        if (!name) return;
+        const goal = {
+          id: state.editingGoalId || uid(),
+          user_id: state.currentUser.id,
+          name,
+          mode: $("goalMode").value,
+          cadence: $("goalCadence").value,
+          metric: $("goalMetric").value,
+          target: Number($("goalTarget").value) || 0,
+          minimum: Number($("goalMinimum").value) || null,
+          active: $("goalActive").value === "true",
+          created_at: new Date().toISOString(),
+        };
+        const existingIndex = state.data.goals.findIndex((g) => g.id === goal.id);
+        if (existingIndex >= 0) {
+          state.data.goals[existingIndex] = goal;
+        } else {
+          state.data.goals.push(goal);
+        }
+        try {
+          await api.saveGoal(goal);
+          await loadUserData(state.currentUser.id);
+          resetGoalForm();
+          renderAll();
+        } catch (err) {
+          alert("Saving the goal failed. Is the server running?");
+        }
+      }
+
+      async function saveCheckin() {
+        const goalId = $("checkinGoal").value;
+        const goal = state.data.goals.find((g) => g.id === goalId);
+        if (!goal) return;
+        const dateValue = $("checkinDate").value || toLocalDateStr(new Date());
+        const chosen = $("checkinResult").value;
+        const payload = {
+          minutes: Number($("checkinMinutes").value) || 0,
+          sessions: 1,
+          checkbox: 1,
+        };
+        let valueInput = Number($("checkinValue").value);
+        let value = calculateValue(goal, payload);
+        if (goal.mode === "casual" && !Number.isNaN(valueInput) && valueInput > 0) {
+          value = valueInput;
+        }
+        if (goal.mode === "casual" && chosen === "skip") {
+          value = 0;
+        }
+        if (goal.mode === "casual" && chosen === "full" && value === 0) {
+          value = goal.target;
+        }
+        if (goal.mode === "casual" && chosen === "min" && value === 0) {
+          value = goal.minimum || Math.ceil(goal.target * 0.5);
+        }
+
+        if (goal.mode === "study") {
+          const topic = $("checkinTopic").value.trim();
+          const summary = $("checkinSummary").value.trim();
+          if (!payload.minutes || !topic || !summary) {
+            $("checkinMsg").textContent =
+              "Study check-ins require minutes, a topic, and a summary.";
+            return;
+          }
+        }
+
+        // Prevent "forcing" full/min results that do not meet thresholds.
+        if (chosen === "full" && value < goal.target) {
+          $("checkinMsg").textContent =
+            "Full completion requires meeting the target. Use Auto or increase the value.";
+          return;
+        }
+        if (chosen === "min") {
+          if (!goal.minimum) {
+            $("checkinMsg").textContent =
+              "This goal has no minimum set. Use Auto or set a minimum on the goal.";
+            return;
+          }
+          if (value < goal.minimum) {
+            $("checkinMsg").textContent =
+              "Minimum completion requires meeting the minimum value. Use Auto or increase the value.";
+            return;
+          }
+        }
+
+        const result = resolveResult(goal, value, chosen);
+        const existingIndex = state.data.checkins.findIndex(
+          (c) =>
+            c.user_id === state.currentUser.id &&
+            c.goal_id === goalId &&
+            c.local_date === dateValue
+        );
+        const checkin = {
+          id: existingIndex >= 0 ? state.data.checkins[existingIndex].id : uid(),
+          user_id: state.currentUser.id,
+          goal_id: goalId,
+          local_date: dateValue,
+          week_id: getWeekId(parseLocalDateStr(dateValue)),
+          minutes: payload.minutes || null,
+          topic: $("checkinTopic").value.trim() || null,
+          summary: $("checkinSummary").value.trim() || null,
+          note: $("checkinNote").value.trim() || null,
+          result,
+          value,
+        };
+        if (existingIndex >= 0) {
+          state.data.checkins[existingIndex] = checkin;
+        } else {
+          state.data.checkins.push(checkin);
+        }
+        try {
+          await api.saveCheckin(checkin);
+          await loadUserData(state.currentUser.id);
+          resetCheckinForm();
+          renderAll();
+          $("checkinMsg").textContent = `Saved as ${result} for ${goal.name}.`;
+        } catch (err) {
+          $("checkinMsg").textContent = "Saving failed. Make sure the server is running.";
+        }
+      }
+
+      function resetCheckinForm() {
+        $("checkinDate").value = toLocalDateStr(new Date());
+        $("checkinResult").value = "auto";
+        $("checkinMinutes").value = "";
+        $("checkinTopic").value = "";
+        $("checkinSummary").value = "";
+        $("checkinValue").value = "";
+        $("checkinNote").value = "";
+        $("checkinMsg").textContent =
+          "Log a full completion or minimum completion to keep your streak alive.";
+        updateCheckinFields();
+      }
+
+      function groupBy(items, key) {
+        return items.reduce((acc, item) => {
+          const value = item[key];
+          acc[value] = acc[value] || [];
+          acc[value].push(item);
+          return acc;
+        }, {});
+      }
+
+      function computeDailyStreak(goal, checkins) {
+        const wins = checkins
+          .filter((c) => c.goal_id === goal.id && (c.result === "full" || c.result === "min"))
+          .map((c) => c.local_date);
+        const winSet = new Set(wins);
+        const sorted = Array.from(winSet).sort();
+        let best = 0;
+        let current = 0;
+        let streak = 0;
+        let prev = null;
+        sorted.forEach((dateStr) => {
+          if (!prev) {
+            streak = 1;
+          } else {
+            const nextDateStr = addDaysToDateStr(prev, 1);
+            if (nextDateStr === dateStr) {
+              streak += 1;
+            } else {
+              streak = 1;
+            }
+          }
+          best = Math.max(best, streak);
+          prev = dateStr;
+        });
+        // Current streak is based on the most recent winning day, not strictly "today".
+        const lastWin = sorted[sorted.length - 1];
+        if (lastWin) {
+          current = 1;
+          let cursorStr = lastWin;
+          while (true) {
+            cursorStr = addDaysToDateStr(cursorStr, -1);
+            if (winSet.has(cursorStr)) {
+              current += 1;
+            } else {
+              break;
+            }
+          }
+        }
+        return { current, best };
+      }
+
+      function computeWeeklyStreak(goal, checkins) {
+        const relevant = checkins.filter((c) => c.goal_id === goal.id);
+        const weekGroups = groupBy(relevant, "week_id");
+        const weekTotals = Object.keys(weekGroups).reduce((acc, weekId) => {
+          acc[weekId] = weekGroups[weekId].reduce((sum, c) => sum + (c.value || 0), 0);
+          return acc;
+        }, {});
+        const weekIds = Object.keys(weekTotals).sort();
+        let best = 0;
+        let current = 0;
+        let streak = 0;
+        let prev = null;
+        weekIds.forEach((weekId) => {
+          const hit = weekTotals[weekId] >= goal.target;
+          if (!prev) {
+            streak = hit ? 1 : 0;
+          } else {
+            const prevParts = prev.split("-W");
+            const prevYear = Number(prevParts[0]);
+            const prevWeek = Number(prevParts[1]);
+            let expectedYear = prevYear;
+            let expectedWeek = prevWeek + 1;
+            if (expectedWeek > 53) {
+              expectedWeek = 1;
+              expectedYear += 1;
+            }
+            const expectedId = `${expectedYear}-W${String(expectedWeek).padStart(2, "0")}`;
+            if (weekId === expectedId && hit) {
+              streak += 1;
+            } else if (hit) {
+              streak = 1;
+            } else {
+              streak = 0;
+            }
+          }
+          if (hit) best = Math.max(best, streak);
+          prev = weekId;
+        });
+        const currentWeekId = getWeekId(new Date());
+        const currentHit = (weekTotals[currentWeekId] || 0) >= goal.target;
+        const endWeek = currentHit
+          ? currentWeekId
+          : (() => {
+              const date = new Date();
+              date.setDate(date.getDate() - 7);
+              return getWeekId(date);
+            })();
+        let cursor = endWeek;
+        current = 0;
+        while (weekTotals[cursor] >= goal.target) {
+          current += 1;
+          const parts = cursor.split("-W");
+          let year = Number(parts[0]);
+          let week = Number(parts[1]) - 1;
+          if (week < 1) {
+            week = 53;
+            year -= 1;
+          }
+          cursor = `${year}-W${String(week).padStart(2, "0")}`;
+        }
+        return { current, best, weekTotals };
+      }
+
+      function getStreaks(goal, checkins) {
+        if (goal.cadence === "daily") {
+          return computeDailyStreak(goal, checkins);
+        }
+        const weekly = computeWeeklyStreak(goal, checkins);
+        return { current: weekly.current, best: weekly.best, weekTotals: weekly.weekTotals };
+      }
+
+      function renderDashboard() {
+        const todayList = $("todayList");
+        const weekList = $("weekList");
+        const goals = getUserGoals(state.currentUser.id).filter((g) => g.active);
+        if (!goals.length) {
+          todayList.textContent = "No active goals yet.";
+          weekList.textContent = "Weekly progress will appear here.";
+          return;
+        }
+        const checkins = getUserCheckins(state.currentUser.id);
+        const today = toLocalDateStr(new Date());
+        todayList.innerHTML = "";
+        weekList.innerHTML = "";
+        goals.forEach((goal) => {
+          const streaks = getStreaks(goal, checkins);
+          const todaysCheckin = checkins.find(
+            (c) => c.goal_id === goal.id && c.local_date === today
+          );
+          const status = todaysCheckin ? todaysCheckin.result : "none";
+          const tagClass = status === "full" ? "good" : status === "min" ? "min" : "skip";
+          const row = document.createElement("div");
+          row.style.marginBottom = "10px";
+          row.innerHTML = `
+            <strong>${goal.name}</strong>
+            <div class="tag ${tagClass}">${status === "none" ? "not yet" : status}</div>
+            <div style="margin-top: 4px; color: var(--muted)">
+              Streak: ${streaks.current} current / ${streaks.best} best
+            </div>
+          `;
+          todayList.appendChild(row);
+          if (goal.cadence === "weekly") {
+            const weekly = computeWeeklyStreak(goal, checkins);
+            const weekId = getWeekId(new Date());
+            const total = weekly.weekTotals[weekId] || 0;
+            const progress = `${total} / ${goal.target} ${goal.metric}`;
+            const row2 = document.createElement("div");
+            row2.style.marginBottom = "10px";
+            row2.innerHTML = `
+              <strong>${goal.name}</strong>
+              <div class="tag ${total >= goal.target ? "good" : "min"}">week ${progress}</div>
+            `;
+            weekList.appendChild(row2);
+          }
+        });
+      }
+
+      function renderHistory() {
+        const historySelect = $("historyGoal");
+        const monthInput = $("historyMonth");
+        if (!monthInput.value) {
+          const now = new Date();
+          monthInput.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+        }
+        const goalId = historySelect.value;
+        const goal = state.data.goals.find((g) => g.id === goalId);
+        const checkins = getUserCheckins(state.currentUser.id);
+        const stats = $("statsSummary");
+        const calendar = $("calendar");
+        calendar.innerHTML = "";
+        if (!goal) {
+          stats.innerHTML = "<p>Select a goal to view stats.</p>";
+          return;
+        }
+        const streaks = getStreaks(goal, checkins);
+        stats.innerHTML = `
+          <div class="notice">
+            Current streak: <strong>${streaks.current}</strong> | Best streak:
+            <strong>${streaks.best}</strong>
+          </div>
+        `;
+        const [year, month] = monthInput.value.split("-").map(Number);
+        const start = new Date(year, month - 1, 1);
+        const end = new Date(year, month, 0);
+        const startDay = start.getDay();
+        for (let i = 0; i < startDay; i += 1) {
+          const pad = document.createElement("div");
+          pad.className = "day";
+          pad.style.opacity = 0.3;
+          pad.textContent = "";
+          calendar.appendChild(pad);
+        }
+        for (let d = 1; d <= end.getDate(); d += 1) {
+          const date = new Date(year, month - 1, d);
+          const dateStr = toLocalDateStr(date);
+          const checkin = checkins.find(
+            (c) => c.goal_id === goal.id && c.local_date === dateStr
+          );
+          const cell = document.createElement("div");
+          const result = checkin ? checkin.result : "none";
+          cell.className = `day ${result}`;
+          cell.textContent = d;
+          calendar.appendChild(cell);
+        }
+        renderCheckinLog(checkins);
+      }
+
+      function renderCheckinLog(checkins) {
+        const table = $("checkinTable");
+        table.innerHTML = "";
+        if (!checkins.length) {
+          table.innerHTML = `<tr><td colspan="4">No check-ins yet.</td></tr>`;
+          return;
+        }
+        const goals = getUserGoals(state.currentUser.id);
+        checkins
+          .slice()
+          .sort((a, b) => b.local_date.localeCompare(a.local_date))
+          .slice(0, 14)
+          .forEach((checkin) => {
+            const goal = goals.find((g) => g.id === checkin.goal_id);
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${checkin.local_date}</td>
+              <td>${goal ? goal.name : "Goal"}</td>
+              <td>${checkin.result}</td>
+              <td>${checkin.value}</td>
+            `;
+            table.appendChild(tr);
+          });
+      }
+
+      function renderAll() {
+        renderGoalsTable();
+        updateCheckinGoalSelect();
+        updateCheckinFields();
+        resetCheckinForm();
+        renderDashboard();
+        renderHistory();
+      }
+
+      $("loginBtn").addEventListener("click", async () => {
+        const email = $("loginEmail").value.trim().toLowerCase();
+        const password = $("loginPassword").value;
+        if (!email || !password) {
+          $("authMsg").textContent = "Email and password required.";
+          return;
+        }
+        try {
+          $("authMsg").textContent = "Logging in...";
+          const { user } = await api.login(email, password);
+          $("authMsg").textContent = "";
+          await setUser(user);
+        } catch (err) {
+          $("authMsg").textContent = err && err.message ? err.message : "Login failed.";
+        }
+      });
+
+      $("signupBtn").addEventListener("click", async () => {
+        const email = $("loginEmail").value.trim().toLowerCase();
+        const password = $("loginPassword").value;
+        if (!email || !password) {
+          $("authMsg").textContent = "Email and password required.";
+          return;
+        }
+        try {
+          $("authMsg").textContent = "Creating account...";
+          const { user } = await api.signup(email, password);
+          $("authMsg").textContent = "";
+          await setUser(user);
+        } catch (err) {
+          $("authMsg").textContent = err && err.message ? err.message : "Sign up failed.";
+        }
+      });
+
+      $("forgotBtn").addEventListener("click", async () => {
+        const email = $("loginEmail").value.trim().toLowerCase();
+        if (!email) {
+          $("authMsg").textContent = "Enter your email first, then click Forgot password.";
+          return;
+        }
+        if (!supabase) {
+          $("authMsg").textContent = "Supabase is not configured correctly.";
+          return;
+        }
+        try {
+          $("authMsg").textContent = "Sending reset email...";
+          const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.href,
+          });
+          if (error) throw error;
+          $("authMsg").textContent = "Password reset email sent. Check your inbox.";
+        } catch (err) {
+          $("authMsg").textContent =
+            err && err.message ? err.message : "Could not send reset email.";
+        }
+      });
+
+      $("resetBtn").addEventListener("click", async () => {
+        const password = $("resetPassword").value;
+        const confirm = $("resetConfirm").value;
+        if (!password || !confirm) {
+          $("authMsg").textContent = "Enter and confirm your new password.";
+          return;
+        }
+        if (password !== confirm) {
+          $("authMsg").textContent = "Passwords do not match.";
+          return;
+        }
+        try {
+          $("authMsg").textContent = "Updating password...";
+          const { error } = await supabase.auth.updateUser({ password });
+          if (error) throw error;
+          $("authMsg").textContent = "Password updated. You can log in now.";
+          hideResetBox();
+          // Clean up recovery tokens in the URL.
+          history.replaceState({}, document.title, window.location.pathname);
+        } catch (err) {
+          $("authMsg").textContent =
+            err && err.message ? err.message : "Could not update password.";
+        }
+      });
+
+      $("resetCancelBtn").addEventListener("click", () => {
+        hideResetBox();
+        history.replaceState({}, document.title, window.location.pathname);
+        $("authMsg").textContent = "";
+      });
+
+      $("logoutBtn").addEventListener("click", async () => {
+        await supabase.auth.signOut();
+        setUser(null);
+      });
+
+      document.querySelectorAll(".nav button[data-view]").forEach((btn) => {
+        btn.addEventListener("click", () => switchView(btn.dataset.view));
+      });
+
+      $("goCheckIn").addEventListener("click", () => switchView("checkin"));
+      $("saveGoalBtn").addEventListener("click", saveGoal);
+      $("resetGoalBtn").addEventListener("click", resetGoalForm);
+      $("checkinGoal").addEventListener("change", updateCheckinFields);
+      $("saveCheckinBtn").addEventListener("click", saveCheckin);
+      $("resetCheckinBtn").addEventListener("click", resetCheckinForm);
+      $("historyGoal").addEventListener("change", renderHistory);
+      $("historyMonth").addEventListener("change", renderHistory);
+      $("exportBtn").addEventListener("click", exportData);
+      $("importBtn").addEventListener("click", () => $("importFile").click());
+      $("backupToggleBtn").addEventListener("click", toggleBackups);
+      $("importFile").addEventListener("change", (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (file) importDataFromFile(file);
+        e.target.value = "";
+      });
+
+      // Start with backup actions hidden; you can unhide via setBackupVisibility(true).
+      setBackupVisibility(false);
+      // Restore session if Supabase Auth already has one.
+      if (!supabase) {
+        $("authMsg").textContent = "Supabase is not configured. Check URL and anon key.";
+      } else {
+        // Temporary: always show reset box for debugging.
+        supabase.auth.onAuthStateChange((event) => {
+          if (event === "PASSWORD_RECOVERY") {
+            showResetBox();
+          }
+        });
+        supabase.auth.getUser().then(({ data }) => {
+          if (data && data.user) {
+            setUser(mapAuthUser(data.user));
+          }
+        });
+      }
+      resetCheckinForm();
+    </script>
+  </body>
+</html>

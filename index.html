@@ -379,7 +379,7 @@
             <button class="btn secondary" id="signupBtn" type="button">Sign Up</button>
           </div>
           <div style="margin-top: 8px; display: flex">
-            <button class="btn ghost" id="forgotBtn" typƒe="button">Forgot password</button>
+            <button class="btn ghost" id="forgotBtn" type="button">Forgot password</button>
           </div>
           <p id="authMsg" style="margin-top: 10px"></p>
           <div id="resetBox" class="card soft" style="margin-top: 12px; display: none">
@@ -640,6 +640,14 @@
         return type === "recovery" || hash.get("type") === "recovery";
       }
 
+      function getAppBaseUrl() {
+        const base = `${window.location.origin}${window.location.pathname}`.replace(
+          /[^/]*$/,
+          ""
+        );
+        return base.endsWith("/") ? base : `${base}/`;
+      }
+
       const api = {
         async signup(email, password) {
           if (!supabaseClient) throw new Error("Supabase is not configured correctly.");
@@ -782,6 +790,10 @@
         userStatus.style.display = user ? "inline-flex" : "none";
         navBar.style.display = user ? "flex" : "none";
         switchView(user ? "dashboard" : "auth");
+        if (user) {
+          hideResetBox();
+          $("authMsg").textContent = "";
+        }
         if (user) {
           try {
             await loadUserData(user.id);
@@ -1375,7 +1387,7 @@
         try {
           $("authMsg").textContent = "Sending reset email...";
           const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-            redirectTo: window.location.href,
+            redirectTo: getAppBaseUrl(),
           });
           if (error) throw error;
           $("authMsg").textContent = "Password reset email sent. Check your inbox.";
@@ -1451,6 +1463,8 @@
         supabaseClient.auth.onAuthStateChange((event) => {
           if (event === "PASSWORD_RECOVERY") {
             showResetBox();
+          } else {
+            hideResetBox();
           }
         });
         supabaseClient.auth.getUser().then(({ data }) => {

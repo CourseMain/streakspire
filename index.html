@@ -614,6 +614,23 @@
         return base.endsWith("/") ? base : `${base}/`;
       }
 
+      function shouldRedirectToReset() {
+        const url = new URL(window.location.href);
+        const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+        const type = url.searchParams.get("type") || hash.get("type");
+        const isRecovery = type === "recovery";
+        const hasToken = hash.has("access_token") || hash.has("refresh_token");
+        return isRecovery || hasToken;
+      }
+
+      if (
+        shouldRedirectToReset() &&
+        !window.location.pathname.endsWith("reset.html")
+      ) {
+        const target = `${getAppBaseUrl()}reset.html${window.location.search}${window.location.hash}`;
+        window.location.replace(target);
+      }
+
       const api = {
         async signup(email, password) {
           if (!supabaseClient) throw new Error("Supabase is not configured correctly.");

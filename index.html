@@ -382,24 +382,6 @@
             <button class="btn ghost" id="forgotBtn" type="button">Forgot password</button>
           </div>
           <p id="authMsg" style="margin-top: 10px"></p>
-          <div id="resetBox" class="card soft" style="margin-top: 12px; display: none">
-            <h3>Reset password</h3>
-            <p>Enter a new password for your account.</p>
-            <div class="form-row">
-              <div>
-                <label>New password</label>
-                <input id="resetPassword" type="password" placeholder="New password" />
-              </div>
-              <div>
-                <label>Confirm password</label>
-                <input id="resetConfirm" type="password" placeholder="Confirm password" />
-              </div>
-            </div>
-            <div style="margin-top: 10px; display: flex; gap: 10px">
-              <button class="btn primary" id="resetBtn" type="button">Update password</button>
-              <button class="btn secondary" id="resetCancelBtn" type="button">Cancel</button>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -624,22 +606,6 @@
         return authUser ? { id: authUser.id, email: authUser.email || "" } : null;
       }
 
-      function showResetBox(message = "Recovery mode: set a new password.") {
-        $("resetBox").style.display = "block";
-        $("authMsg").textContent = message;
-      }
-
-      function hideResetBox() {
-        $("resetBox").style.display = "none";
-      }
-
-      function isRecoveryLink() {
-        const url = new URL(window.location.href);
-        const type = url.searchParams.get("type");
-        const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
-        return type === "recovery" || hash.get("type") === "recovery";
-      }
-
       function getAppBaseUrl() {
         const base = `${window.location.origin}${window.location.pathname}`.replace(
           /[^/]*$/,
@@ -790,10 +756,6 @@
         userStatus.style.display = user ? "inline-flex" : "none";
         navBar.style.display = user ? "flex" : "none";
         switchView(user ? "dashboard" : "auth");
-        if (user) {
-          hideResetBox();
-          $("authMsg").textContent = "";
-        }
         if (user) {
           try {
             await loadUserData(user.id);
@@ -1387,7 +1349,7 @@
         try {
           $("authMsg").textContent = "Sending reset email...";
           const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-            redirectTo: getAppBaseUrl(),
+            redirectTo: `${getAppBaseUrl()}reset.html`,
           });
           if (error) throw error;
           $("authMsg").textContent = "Password reset email sent. Check your inbox.";
@@ -1395,37 +1357,6 @@
           $("authMsg").textContent =
             err && err.message ? err.message : "Could not send reset email.";
         }
-      });
-
-      $("resetBtn").addEventListener("click", async () => {
-        const password = $("resetPassword").value;
-        const confirm = $("resetConfirm").value;
-        if (!password || !confirm) {
-          $("authMsg").textContent = "Enter and confirm your new password.";
-          return;
-        }
-        if (password !== confirm) {
-          $("authMsg").textContent = "Passwords do not match.";
-          return;
-        }
-        try {
-          $("authMsg").textContent = "Updating password...";
-          const { error } = await supabaseClient.auth.updateUser({ password });
-          if (error) throw error;
-          $("authMsg").textContent = "Password updated. You can log in now.";
-          hideResetBox();
-          // Clean up recovery tokens in the URL.
-          history.replaceState({}, document.title, window.location.pathname);
-        } catch (err) {
-          $("authMsg").textContent =
-            err && err.message ? err.message : "Could not update password.";
-        }
-      });
-
-      $("resetCancelBtn").addEventListener("click", () => {
-        hideResetBox();
-        history.replaceState({}, document.title, window.location.pathname);
-        $("authMsg").textContent = "";
       });
 
       $("logoutBtn").addEventListener("click", async () => {
@@ -1460,13 +1391,6 @@
       if (!supabaseClient) {
         $("authMsg").textContent = "Supabase is not configured. Check URL and anon key.";
       } else {
-        supabaseClient.auth.onAuthStateChange((event) => {
-          if (event === "PASSWORD_RECOVERY") {
-            showResetBox();
-          } else {
-            hideResetBox();
-          }
-        });
         supabaseClient.auth.getUser().then(({ data }) => {
           if (data && data.user) {
             setUser(mapAuthUser(data.user));

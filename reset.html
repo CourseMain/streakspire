@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Streakspire - Reset Password</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Manrope:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f2e9df;
+        --card: #f9f1e7;
+        --ink: #2c2016;
+        --muted: #6d5a4a;
+        --accent: #2f6f6b;
+        --accent-ink: #ffffff;
+        --stroke: rgba(44, 32, 22, 0.12);
+        --shadow: 0 20px 50px rgba(44, 32, 22, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Manrope", system-ui, -apple-system, sans-serif;
+        color: var(--ink);
+        background: radial-gradient(circle at top left, #e8f0e6, transparent 50%),
+          radial-gradient(circle at top right, #f6d7c8, transparent 55%),
+          var(--bg);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px;
+      }
+
+      .card {
+        width: min(520px, 92vw);
+        background: var(--card);
+        border: 1px solid var(--stroke);
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: var(--shadow);
+      }
+
+      h1 {
+        font-family: "Fraunces", serif;
+        font-size: 28px;
+        margin: 0 0 8px;
+      }
+
+      p {
+        margin: 0 0 18px;
+        color: var(--muted);
+      }
+
+      label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--stroke);
+        background: #fff;
+        font-size: 15px;
+        margin-bottom: 14px;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .btn {
+        border: none;
+        border-radius: 999px;
+        padding: 12px 18px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .btn.primary {
+        background: var(--accent);
+        color: var(--accent-ink);
+      }
+
+      .btn.ghost {
+        background: transparent;
+        border: 1px solid var(--stroke);
+        color: var(--ink);
+      }
+
+      .msg {
+        margin-top: 12px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <h1>Reset your password</h1>
+      <p>Enter a new password for your account.</p>
+
+      <div class="row">
+        <div>
+          <label for="resetPassword">New password</label>
+          <input id="resetPassword" type="password" placeholder="New password" />
+        </div>
+        <div>
+          <label for="resetConfirm">Confirm password</label>
+          <input id="resetConfirm" type="password" placeholder="Confirm password" />
+        </div>
+      </div>
+
+      <button class="btn primary" id="resetBtn" type="button">Update password</button>
+      <button class="btn ghost" id="cancelBtn" type="button" style="margin-left: 8px">
+        Back to login
+      </button>
+
+      <div class="msg" id="msg"></div>
+    </main>
+
+    <script src="supabase.js"></script>
+    <script>
+      const SUPABASE_URL = "https://fuhwlybanipypccjotpa.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1aHdseWJhbmlweXBjY2pvdHBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0ODMyNjQsImV4cCI6MjA4NTA1OTI2NH0.kpsfqn4bSxP7mYk-3-mJQLoGaHR7O61VQrd6DmKzAH0";
+
+      const $ = (id) => document.getElementById(id);
+      const msg = $("msg");
+      const supabaseClient = window.supabase?.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+      function appRoot() {
+        const base = `${window.location.origin}${window.location.pathname}`.replace(
+          /[^/]*$/,
+          ""
+        );
+        return base.endsWith("/") ? base : `${base}/`;
+      }
+
+      function isRecoveryLink() {
+        const url = new URL(window.location.href);
+        const type = url.searchParams.get("type");
+        const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+        return type === "recovery" || hash.get("type") === "recovery";
+      }
+
+      if (!supabaseClient) {
+        msg.textContent = "Supabase is not configured. Check URL and anon key.";
+      } else if (!isRecoveryLink()) {
+        msg.textContent = "This reset link is missing recovery data.";
+      }
+
+      $("resetBtn").addEventListener("click", async () => {
+        const password = $("resetPassword").value;
+        const confirm = $("resetConfirm").value;
+        if (!password || !confirm) {
+          msg.textContent = "Enter and confirm your new password.";
+          return;
+        }
+        if (password !== confirm) {
+          msg.textContent = "Passwords do not match.";
+          return;
+        }
+        try {
+          msg.textContent = "Updating password...";
+          const { error } = await supabaseClient.auth.updateUser({ password });
+          if (error) throw error;
+          msg.textContent = "Password updated. Redirecting to login...";
+          await supabaseClient.auth.signOut();
+          window.location.href = appRoot();
+        } catch (err) {
+          msg.textContent = err && err.message ? err.message : "Could not update password.";
+        }
+      });
+
+      $("cancelBtn").addEventListener("click", () => {
+        window.location.href = appRoot();
+      });
+    </script>
+  </body>
+</html>
